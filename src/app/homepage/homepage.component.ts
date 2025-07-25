@@ -11,26 +11,43 @@ export class HomepageComponent {
     currentPage = 1;
     currentPageItems:any;
     totalPagesArray: number[] = [];
-    itemsPerPage=5;
+    selecteditems=2;
+    itemsPerPage=this.selecteditems;
+    page=1;
+    start =1
+    end =2;
     z:number=0;
     i:any;
     constructor(private a:ProdutsService){}
     ngOnInit(){
       this.Products = this.a.getProducts();
-      this.z = this.Products.length/this.itemsPerPage;
-      for(this.i=1;this.i<this.z;this.i++){
-        this.totalPagesArray.push(this.i);
-      }
        this.updatePagination();
     }
-  setPage(page: number) {
-    this.currentPage = page;
-    this.updatePagination();
-  }
 
   updatePagination() {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    this.currentPageItems = this.Products.slice(start, end);
+    this.itemsPerPage = this.selecteditems;
+   this.start = (this.page - 1) * this.itemsPerPage + 1;
+this.end = Math.min(this.start + this.itemsPerPage - 1, this.Products.length);
+     console.log(this.start,this.end);
+        this.currentPageItems = this.Products.slice(this.start-1, this.end);
+    console.log(this.currentPageItems);
+     
+  }
+  changeSeleteItems(x:any){
+      this.selecteditems = x;
+      this.page = Math.floor(this.start/x)+1;
+      this.updatePagination();
+  }
+  clickLeft(){
+      if(this.page>1){
+        this.page--;
+        this.updatePagination();
+      }
+  }
+  clickRight(){
+    if((this.page * this.itemsPerPage)<this.Products.length){
+        this.page = this.page+1;
+        this.updatePagination();
+    } 
   }
 }
