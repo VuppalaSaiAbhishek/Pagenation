@@ -7,7 +7,7 @@ import { ProdutsService } from '../produts.service';
   styleUrl: './homepage.component.css'
 })
 export class HomepageComponent {
-    Products:any;
+    Products:number[]=[];
     currentPage = 1;
     currentPageItems:any;
     totalPagesArray: number[] = [];
@@ -18,10 +18,17 @@ export class HomepageComponent {
     end =2;
     z:number=0;
     i:any;
+    pagestart=0;
+    limit=5;
     constructor(private a:ProdutsService){}
     ngOnInit(){
-      this.Products = this.a.getProducts();
-       this.updatePagination();
+        this.APIProducts(this.pagestart,this.limit);
+    }
+    APIProducts(a:any,b:any){
+      this.a.getProducts(a,b).subscribe((data:any)=>{
+        this.Products = [...this.Products,...data.obj];
+        this.updatePagination();
+      });
     }
 
   updatePagination() {
@@ -48,6 +55,10 @@ this.end = Math.min(this.start + this.itemsPerPage - 1, this.Products.length);
     if((this.page * this.itemsPerPage)<this.Products.length){
         this.page = this.page+1;
         this.updatePagination();
-    } 
+    }
+    if(this.end == this.Products.length){
+        this.pagestart = this.pagestart+this.limit;
+        this.APIProducts(this.pagestart,this.limit);
+    }
   }
 }
